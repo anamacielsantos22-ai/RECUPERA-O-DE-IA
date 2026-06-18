@@ -1,4 +1,3 @@
-// Banco de dados de perguntas do Quiz
 const questions = [
     {
         question: "1. Qual destas opções indica um possível sinal de que um vídeo é uma Deepfake?",
@@ -26,7 +25,6 @@ const questions = [
     }
 ];
 
-// Elementos capturados do HTML
 const questionElement = document.getElementById('question');
 const answerButtonsElement = document.getElementById('answer-buttons');
 const questionContainer = document.getElementById('question-container');
@@ -37,19 +35,17 @@ const restartButton = document.getElementById('restart-btn');
 let currentQuestionIndex = 0;
 let score = 0;
 
-// Inicializa ou reinicia o Quiz com segurança
 function startQuiz() {
     currentQuestionIndex = 0;
     score = 0;
-    if (resultContainer) resultContainer.classList.add('hide');
-    if (questionContainer) questionContainer.classList.remove('hide');
+    resultContainer.classList.add('hide');
+    questionContainer.classList.remove('hide');
     showQuestion();
 }
 
-// Mostra a pergunta atual na tela
 function showQuestion() {
     resetState();
-    const currentQuestion = questions[currentQuestionIndex];
+    let currentQuestion = questions[currentQuestionIndex];
     questionElement.innerText = currentQuestion.question;
 
     currentQuestion.answers.forEach(answer => {
@@ -57,7 +53,6 @@ function showQuestion() {
         button.innerText = answer.text;
         button.classList.add('quiz-btn');
         
-        // Define nativamente o valor booleano no dataset do elemento
         if (answer.correct) {
             button.dataset.correct = "true";
         } else {
@@ -69,14 +64,12 @@ function showQuestion() {
     });
 }
 
-// Limpa os botões da pergunta anterior para evitar acúmulo de nós no DOM
 function resetState() {
     while (answerButtonsElement.firstChild) {
         answerButtonsElement.removeChild(answerButtonsElement.firstChild);
     }
 }
 
-// Processa a escolha do usuário
 function selectAnswer(e) {
     const selectedButton = e.target;
     const isCorrect = selectedButton.dataset.correct === 'true';
@@ -93,17 +86,13 @@ function selectAnswer(e) {
     }
 }
 
-// Exibe os resultados finais
 function showResults() {
-    if (questionContainer) questionContainer.classList.add('hide');
-    if (resultContainer) resultContainer.classList.remove('hide');
-    scoreTextElement.innerText = `Você acertou ${score} de ${questions.length} perguntas!`;
+    questionContainer.classList.add('hide');
+    resultContainer.classList.remove('hide');
+    scoreTextElement.innerHTML = `Você acertou <strong>${score}</strong> de <strong>${questions.length}</strong> perguntas!<br><br>Continue praticando a navegação segura!`;
 }
 
-// Ouvinte de evento para o botão de reiniciar
-if (restartButton) {
-    restartButton.addEventListener('click', startQuiz);
-}
+restartButton.addEventListener('click', startQuiz);
 
-// Executa automaticamente ao carregar a página
+// Inicializa quando a página carregar
 document.addEventListener('DOMContentLoaded', startQuiz);
