@@ -1,7 +1,8 @@
-const questions = [
+// Dados do Quiz
+const quizData = [
     {
         question: "1. Qual destas opções indica um possível sinal de que um vídeo é uma Deepfake?",
-        answers: [
+        options: [
             { text: "O vídeo está em alta definição (4K).", correct: false },
             { text: "Padrões de piscada de olhos não naturais ou falta de sincronia nos lábios.", correct: true },
             { text: "O vídeo possui legendas automáticas.", correct: false }
@@ -9,7 +10,7 @@ const questions = [
     },
     {
         question: "2. O que você deve fazer imediatamente ao receber uma notícia alarmante em um aplicativo de mensagens?",
-        answers: [
+        options: [
             { text: "Compartilhar com todos os seus contatos para alertá-los o quanto antes.", correct: false },
             { text: "Ignorar totalmente e deletar o aplicativo.", correct: false },
             { text: "Não compartilhar e verificar a informação em canais de notícias oficiais ou agências de checagem.", correct: true }
@@ -17,7 +18,7 @@ const questions = [
     },
     {
         question: "3. O que define uma atitude de 'Cidadania Digital'?",
-        answers: [
+        options: [
             { text: "Usar a internet de forma ética, crítica, consciente e segura.", correct: true },
             { text: "Comentar em todas as publicações que aparecem na sua timeline.", correct: false },
             { text: "Acreditar apenas em informações publicadas por perfis com muitos seguidores.", correct: false }
@@ -25,74 +26,71 @@ const questions = [
     }
 ];
 
-const questionElement = document.getElementById('question');
-const answerButtonsElement = document.getElementById('answer-buttons');
-const questionContainer = document.getElementById('question-container');
-const resultContainer = document.getElementById('result-container');
-const scoreTextElement = document.getElementById('score-text');
-const restartButton = document.getElementById('restart-btn');
+// Elementos da DOM
+const questionText = document.getElementById('question-text');
+const answerOptionsContainer = document.getElementById('answer-options');
+const questionBox = document.getElementById('question-box');
+const resultBox = document.getElementById('result-box');
+const scoreText = document.getElementById('score-text');
+const restartBtn = document.getElementById('restart-btn');
 
 let currentQuestionIndex = 0;
-let score = 0;
+let userScore = 0;
 
-function startQuiz() {
+// Inicializa o jogo
+function loadQuiz() {
     currentQuestionIndex = 0;
-    score = 0;
-    resultContainer.classList.add('hide');
-    questionContainer.classList.remove('hide');
-    showQuestion();
+    userScore = 0;
+    resultBox.classList.add('hide');
+    questionBox.classList.remove('hide');
+    displayQuestion();
 }
 
-function showQuestion() {
-    resetState();
-    let currentQuestion = questions[currentQuestionIndex];
-    questionElement.innerText = currentQuestion.question;
+// Renderiza a pergunta e seus botões correspondentes
+function displayQuestion() {
+    // Limpa opções anteriores de forma limpa
+    answerOptionsContainer.innerHTML = "";
+    
+    const currentQuiz = quizData[currentQuestionIndex];
+    questionText.innerText = currentQuiz.question;
 
-    currentQuestion.answers.forEach(answer => {
+    // Cria os botões dinamicamente
+    currentQuiz.options.forEach((option, index) => {
         const button = document.createElement('button');
-        button.innerText = answer.text;
+        button.innerText = option.text;
         button.classList.add('quiz-btn');
         
-        if (answer.correct) {
-            button.dataset.correct = "true";
-        } else {
-            button.dataset.correct = "false";
-        }
+        // Evento de clique direto mapeado para a função de verificação
+        button.onclick = () => handleAnswerSelection(option.correct);
         
-        button.addEventListener('click', selectAnswer);
-        answerButtonsElement.appendChild(button);
+        answerOptionsContainer.appendChild(button);
     });
 }
 
-function resetState() {
-    while (answerButtonsElement.firstChild) {
-        answerButtonsElement.removeChild(answerButtonsElement.firstChild);
-    }
-}
-
-function selectAnswer(e) {
-    const selectedButton = e.target;
-    const isCorrect = selectedButton.dataset.correct === 'true';
-    
+// Processa o clique da resposta
+function handleAnswerSelection(isCorrect) {
     if (isCorrect) {
-        score++;
+        userScore++;
     }
 
     currentQuestionIndex++;
-    if (currentQuestionIndex < questions.length) {
-        showQuestion();
+
+    if (currentQuestionIndex < quizData.length) {
+        displayQuestion();
     } else {
-        showResults();
+        showFinalResults();
     }
 }
 
-function showResults() {
-    questionContainer.classList.add('hide');
-    resultContainer.classList.remove('hide');
-    scoreTextElement.innerHTML = `Você acertou <strong>${score}</strong> de <strong>${questions.length}</strong> perguntas!<br><br>Continue praticando a navegação segura!`;
+// Apresenta pontuação final
+function showFinalResults() {
+    questionBox.classList.add('hide');
+    resultBox.classList.remove('hide');
+    scoreText.innerHTML = `Você acertou <strong>${userScore}</strong> de <strong>${quizData.length}</strong> perguntas.`;
 }
 
-restartButton.addEventListener('click', startQuiz);
+// Ouvintes
+restartBtn.onclick = loadQuiz;
 
-// Inicializa quando a página carregar
-document.addEventListener('DOMContentLoaded', startQuiz);
+// Disparar o quiz assim que o documento carregar
+window.onload = loadQuiz;
